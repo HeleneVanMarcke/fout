@@ -73,12 +73,13 @@ PennController("DeviceCheck+Subject",
             .wait()    
         )
         
-        
-
-// MIEKE       
+      
 // Implementing the Trials
+
+Sequence( randomize("sequence"))
+
     PennController.Template("Trial_MP.csv",
-        variable => PennController("trials", 
+        variable => PennController("sequence", 
             newText("sentence", variable.Sentence)
                 .settings.center()
                 .settings.css("font-size", "30px")
@@ -105,105 +106,43 @@ PennController("DeviceCheck+Subject",
                 .settings.log()
                 .wait()
         )
-    .log( "Subject"         , getVar("Subject")         )     
-    .log( "Group"           , variable.Group            )
-    .log( "StimulusType"    , variable.Stimuli_Type     )                            
+    .log( "Subject"         , getVar("Subject")         ) 
+    .log( "StimulusType"    , variable.Stimulus_Type    )                            
     .log( "Sentence"        , variable.Sentence         )
-    .log( "Item"            , variable.Item             )
+    .log( "Sequence"        , variable.Sequence         )
     .log( "Picture1"        , variable.Picture1         )                           
-    .log( "Experiment"      , variable.CorPic           ) 
+    .log( "Experiment"      , variable.Correct          ) 
     .log( "Picture2"        , variable.Picture2         )
-    .log( "PrimeCondition"  , variable.PrimeCondition   )   
+    .log( "PrimeCondition"  , variable.Prime_condition  )   
     .log( "Email" , getVar("Email") )                            
 )
 
-
-// DEMO
-// Randomisation
-
-Sequence( randomize("experiment") , "send" , "final" )
-
-newTrial( "welcome" ,
-    defaultText
+// Vragen gegevens:
+PennController("QuestionnairePage",
+    newHtml("Questionnaire", "Questionnaire.html")
+        .settings.log()
         .print()
     ,
-    newText("<p>Welcome!</p>")
-    ,
-    newText("<p>In this experiment, you will have to report which of two pictures matches a description.</p>")
-    ,
-    newText("<p>Press the <strong>F</strong> key for the picture on the left, or the <strong>J</strong> key for the picture on the right.</p>")
-    ,
-    newText("<p>Please enter your ID and then click the button below to start the experiment.</p>")
-    ,
-    newTextInput("inputID")
+    newButton("continue", "Continue")
         .print()
-    ,
-    newButton("Start")
-        .print()
-        .wait()
-    ,
-    newVar("ID")
-        .global()
-        .set( getTextInput("inputID") )
+        .wait(
+            getHtml("Questionnaire").test.complete()
+                .failure( getHtml("Questionnaire").warn() )
+        )                      
 )
-.log( "ID" , getVar("ID") )
+.log( "Subject", getVar("Subject")) 
 
 
-Template( variable => 
-  newTrial( "experiment" ,
-    newTimer(500)
-        .start()
-        .wait()
-    ,
-    newAudio("description", variable.AudioFile)
-        .play()
-    ,
-    newText(variable.Description)
-        .unfold(2600)
-    ,
-    newImage("two", variable.PluralImageFile)
-        .size(200,200)
-    ,
-    newImage("one", variable.SingularImageFile)
-        .size(200,200)
-    ,
-    newCanvas(450,200)
-        .add(   0 , 0 , getImage("two") )
-        .add( 250 , 0 , getImage("one") )
-        .print()
-    ,
-    newSelector()
-        .add( getImage("two") , getImage("one") )
-        .shuffle()
-        .keys(          "F"    ,          "J"   )
-        .log()
-        .wait()
-    ,
-    getAudio("description")
-       .wait("first")
-    ,
-    newTimer(500)
-        .start()
-        .wait()
-  )
-  .log( "ID"     , getVar("ID")    )
-  .log( "Item"   , variable.Item   )
-  .log( "Ending" , variable.Ending )
-  .log( "Group"  , variable.Group  )
-)
+PennController.SendResults("Send");
 
-
-SendResults( "send" )
-
-
-newTrial( "final" ,
-    newText("<p>Thank you for your participation!</p>")
-        .print()
-    ,
-    newText("<p><a href='https://www.pcibex.net/' href='_blank'>Click here to validate your participation.</a></p>")
-        .print()
-    ,
-    newButton("void")
-        .wait()
-)
+    PennController("Closing",
+        newText("Explanation", "Dear participant, <br><br> Thank you for your participation! <br><br> In this study, we test and compare monolingual and bilingual language processing. Some of the sentences you read were ambiguous, such as <i> All the apples are not in the boxes </i>. This sentence can be interpreted as meaning that none of the apples are in the boxes, but also that not all (but some) apples are in the boxes. In this experiment, we wanted to test whether preceding exposure to pictures showing one of the two situations would influence your choice of interpretation of these sentences. <br><br> Do you want to know more, or receive a report of the results? Please email me on mieke.slim@ugent.be <br><br> You can now exit the experiment by closing the browser.")
+        ,
+        newCanvas("Canvas", 500, 600)
+            .settings.add(0,0, getText("Explanation"))
+            .print()
+        ,
+        newButton("void")
+            .wait()
+     )
         
