@@ -78,7 +78,7 @@ PennController("DeviceCheck+Subject",
 
 Sequence( randomize("sequence"))
 
-    PennController.Template("Trial_MP.csv",
+    PennController.Template("Trials_MP.csv",
         variable => PennController("sequence", 
             newText("sentence", variable.Sentence)
                 .settings.center()
@@ -86,11 +86,11 @@ Sequence( randomize("sequence"))
                 .settings.bold()
                 .print()
             ,
-            newImage("picture1", variable.Picture1)
+            newImage("picture1", variable.Picture1.jpg)
                 .settings.size(350,350)
                 .settings.css( "border" , "solid 1px black" )
             ,
-            newImage("picture2", variable.Picture2)
+            newImage("picture2", variable.Picture2.jpg)
                 .settings.size(350,350)
                 .settings.css( "border" , "solid 1px black" )                                   
             ,
@@ -110,9 +110,9 @@ Sequence( randomize("sequence"))
     .log( "StimulusType"    , variable.Stimulus_Type    )                            
     .log( "Sentence"        , variable.Sentence         )
     .log( "Sequence"        , variable.Sequence         )
-    .log( "Picture1"        , variable.Picture1         )                           
+    .log( "Picture1"        , variable.Picture1.jpg     )                           
     .log( "Experiment"      , variable.Correct          ) 
-    .log( "Picture2"        , variable.Picture2         )
+    .log( "Picture2"        , variable.Picture2.jpg     )
     .log( "PrimeCondition"  , variable.Prime_condition  )   
     .log( "Email" , getVar("Email") )                            
 )
