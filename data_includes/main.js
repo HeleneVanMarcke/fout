@@ -1,6 +1,9 @@
 // Masterproef
 
 PennController.ResetPrefix(null) // Shorten command names (keep this line here)
+PennController.DebugOff()
+PennController.SetCounter("Counter")
+PennController.Sequence("DeviceCheck+subject", "Counter", "Subject", "Welcome", "Consent", randomize("trials"), "QuestionnairePage", "Send", "Closing")
 
 
 // Check for L1
@@ -76,10 +79,9 @@ PennController("DeviceCheck+Subject",
       
 // Implementing the Trials
 
-Sequence( randomize("sequence"))
 
     PennController.Template("Trials_MP.csv",
-        variable => PennController("sequence", 
+        variable => PennController("trials", 
             newText("sentence", variable.Sentence)
                 .settings.center()
                 .settings.css("font-size", "30px")
@@ -109,6 +111,7 @@ Sequence( randomize("sequence"))
     .log( "Subject"         , getVar("Subject")         ) 
     .log( "StimulusType"    , variable.Stimulus_Type    )                            
     .log( "Sentence"        , variable.Sentence         )
+    .log( "Item"            , variable.Item             )
     .log( "Sequence"        , variable.Sequence         )
     .log( "Picture1"        , variable.Picture1.jpg     )                           
     .log( "Experiment"      , variable.Correct          ) 
@@ -145,4 +148,3 @@ PennController.SendResults("Send");
         newButton("void")
             .wait()
      )
-        
